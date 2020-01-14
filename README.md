@@ -88,13 +88,19 @@ To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](htt
 - [Channels and Bot Connector Service](https://docs.microsoft.com/en-us/azure/bot-service/bot-concepts?view=azure-bot-service-4.0)
 
 ---
+
 page_type: sample
+
 languages:
 - csharp
+
 products:
 - dotnet
+
 description: "Add 150 character max description"
+
 urlFragment: "update-this-to-unique-url-stub"
+
 ---
 
 # Official Microsoft Sample
