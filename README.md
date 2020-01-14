@@ -90,9 +90,9 @@ To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](htt
 ---
 page_type: sample
 languages:
-    - csharp
+- csharp
 products:
-    - dotnet
+- dotnet
 description: "Add 150 character max description"
 urlFragment: "update-this-to-unique-url-stub"
 ---
