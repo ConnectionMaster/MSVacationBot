@@ -12,6 +12,7 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using Microsoft.Extensions.Configuration;
+using Luis;
 
 namespace Microsoft.BotBuilderSamples.Dialogs
 {
@@ -39,7 +40,8 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 PromptStepAsync,
                 LoginStepAsync,
                 AfterLogin,
-                AfterLoginCheck
+                AfterLoginCheck,
+                LuisEchoStepAsync,
             }));
 
             connectionName = configuration["ConnectionName"];
@@ -61,17 +63,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
         private async Task<DialogTurnResult> PromptStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            var tokenResponse = (TokenResponse)stepContext.Result;
-
-            if (tokenResponse != null)
-            {
-                //return await stepContext.EndDialogAsync();
-                return await stepContext.NextAsync();
-            }
-            else
-            {
                 return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
-            }
         }
 
         private async Task<DialogTurnResult> LoginStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -87,7 +79,9 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             }
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("Login was not successful please try again."), cancellationToken);
-            return await stepContext.EndDialogAsync();
+            
+            // return await stepContext.EndDialogAsync();
+            return await stepContext.NextAsync(null, cancellationToken);
         }
 
         private async Task<DialogTurnResult> AfterLogin(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -135,7 +129,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             }
 
             // Use the text provided in FinalStepAsync or the default if it is the first time.
-            var messageText = stepContext.Options?.ToString() ?? "What can I help you with today?\nSay something like \"Book a flight from Paris to Berlin on March 22, 2020\"";
+            var messageText = stepContext.Options?.ToString() ?? "What can I help you with today?\nSay something like \"Request vacation on March 22 2020\"";
             var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
 
@@ -235,6 +229,64 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             // Restart the main dialog with a different message the second time around
             var promptMessage = "What else can I do for you?";
             return await stepContext.ReplaceDialogAsync(InitialDialogId, promptMessage, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> LuisEchoStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+           
+            if (!_luisRecognizer.IsConfigured)
+            {
+                // LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
+                return await stepContext.BeginDialogAsync(nameof(BookingDialog), new BookingDetails(), cancellationToken);
+            }
+
+            // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt.)
+            var luisResult = await _luisRecognizer.RecognizeAsync<MSVacationBot>(stepContext.Context, cancellationToken);
+
+            var messageText = "";
+
+            switch (luisResult.TopIntent().intent)
+            {
+                case MSVacationBot.Intent.ApproveVacation:
+                    messageText = "Intent.ApproveVacation";
+                    break;
+                case MSVacationBot.Intent.BalanceStatus:
+                    messageText = "Intent.BalanceStatus";
+                    break;
+                case MSVacationBot.Intent.CollectTeamVacation:
+                    messageText = "Intent.CollectTeamVacation";
+                    break;
+                case MSVacationBot.Intent.EmployeeStatusInquiry:
+                    messageText = "Intent.EmployeeStatusInquiry";
+                    break;
+                case MSVacationBot.Intent.GetPendingApprovals:
+                    messageText = "Intent.GetPendingApprovals";
+                    break;
+                case MSVacationBot.Intent.None:
+                    messageText = "Intent.None";
+                    break;
+                case MSVacationBot.Intent.PublicHolidayAwareness:
+                    messageText = "Intent.PublicHolidayAwareness";
+                    break;
+                case MSVacationBot.Intent.ReassignVacation:
+                    messageText = "Intent.ReassignVacation";
+                    break;
+                case MSVacationBot.Intent.RequestVacation:
+                    messageText = "Intent.RequestVacation";
+                    break;
+
+
+                default:
+                    // Catch all for unhandled intents
+                        messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
+                     break;
+            }
+
+            var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+            await stepContext.Context.SendActivityAsync(message, cancellationToken);
+
+            return await stepContext.EndDialogAsync();
+            // return await stepContext.NextAsync(null, cancellationToken);
         }
     }
 }

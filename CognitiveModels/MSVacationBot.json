@@ -1,0 +1,1585 @@
+{
+  "luis_schema_version": "4.0.0",
+  "versionId": "0.1",
+  "name": "MSVacationBot",
+  "desc": "",
+  "culture": "en-us",
+  "tokenizerVersion": "1.0.0",
+  "intents": [
+    {
+      "name": "ApproveVacation"
+    },
+    {
+      "name": "BalanceStatus"
+    },
+    {
+      "name": "CollectTeamVacation"
+    },
+    {
+      "name": "EmployeeStatusInquiry"
+    },
+    {
+      "name": "GetPendingApprovals"
+    },
+    {
+      "name": "None"
+    },
+    {
+      "name": "PublicHolidayAwareness"
+    },
+    {
+      "name": "ReassignVacation"
+    },
+    {
+      "name": "RequestVacation"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Alias",
+      "roles": []
+    },
+    {
+      "name": "DateEnd",
+      "roles": []
+    },
+    {
+      "name": "DateStart",
+      "roles": []
+    },
+    {
+      "name": "Person",
+      "roles": []
+    },
+    {
+      "name": "Timezone",
+      "roles": []
+    },
+    {
+      "name": "VacationAmount",
+      "roles": []
+    }
+  ],
+  "composites": [],
+  "closedLists": [
+    {
+      "name": "ApproveRejectList",
+      "subLists": [
+        {
+          "canonicalForm": "Approve",
+          "list": [
+            "approve",
+            "accept",
+            "agree",
+            "agreed",
+            "approved",
+            "accepted"
+          ]
+        },
+        {
+          "canonicalForm": "Reject",
+          "list": [
+            "reject",
+            "refuse",
+            "decline",
+            "turn down",
+            "dismiss",
+            "disapprove"
+          ]
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "ChangesList",
+      "subLists": [
+        {
+          "canonicalForm": "delete",
+          "list": [
+            "remove",
+            "cancel"
+          ]
+        },
+        {
+          "canonicalForm": "end",
+          "list": []
+        },
+        {
+          "canonicalForm": "start",
+          "list": [
+            "beginning"
+          ]
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "Country",
+      "subLists": [],
+      "roles": []
+    },
+    {
+      "name": "DateUnits",
+      "subLists": [
+        {
+          "canonicalForm": "Year",
+          "list": [
+            "year",
+            "yr",
+            "years",
+            "yrs",
+            "2020"
+          ]
+        },
+        {
+          "canonicalForm": "Month",
+          "list": [
+            "month",
+            "mnths",
+            "months"
+          ]
+        },
+        {
+          "canonicalForm": "Week",
+          "list": [
+            "weeks",
+            "wk",
+            "wks"
+          ]
+        },
+        {
+          "canonicalForm": "Day",
+          "list": [
+            "d",
+            "days",
+            "day",
+            "dys"
+          ]
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "EmployeeType",
+      "subLists": [
+        {
+          "canonicalForm": "CSG",
+          "list": [
+            "vendor",
+            "contractor",
+            "agent",
+            "vendors",
+            "contractors",
+            "agents"
+          ]
+        },
+        {
+          "canonicalForm": "FTE",
+          "list": [
+            "full time employee",
+            "full time employees"
+          ]
+        },
+        {
+          "canonicalForm": "Everyone",
+          "list": [
+            "whole team",
+            "entire team",
+            "everyone in the team"
+          ]
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "VacationTypes",
+      "subLists": [
+        {
+          "canonicalForm": "paid",
+          "list": [
+            "pto",
+            "paid time off"
+          ]
+        },
+        {
+          "canonicalForm": "sick",
+          "list": [
+            "illness",
+            "dont feel well",
+            "sick leave"
+          ]
+        }
+      ],
+      "roles": []
+    }
+  ],
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "prebuiltEntities": [
+    {
+      "name": "datetimeV2",
+      "roles": [
+        "newDate",
+        "originalDate"
+      ]
+    },
+    {
+      "name": "number",
+      "roles": []
+    },
+    {
+      "name": "ordinalV2",
+      "roles": []
+    },
+    {
+      "name": "personName",
+      "roles": []
+    }
+  ],
+  "model_features": [],
+  "regex_features": [],
+  "patterns": [],
+  "utterances": [
+    {
+      "text": "accept amr",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "accept david hall's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "accept lili's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "accept the holiday of mohamed",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 22,
+          "endPos": 28
+        }
+      ]
+    },
+    {
+      "text": "accept the request",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "agreed",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "approve carol",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "approve chandler's request",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "approve hazem's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "approve hussein",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "approve jim's holiday",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 10
+        }
+      ]
+    },
+    {
+      "text": "approve sara",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "approve the holiday",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "approve the request",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "are there any pending approvals i need to do?",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "ask for sick leave for 3 days start it on the 14th of january",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 23,
+          "endPos": 23
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 23,
+          "endPos": 28
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 25,
+          "endPos": 28
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 46,
+          "endPos": 60
+        }
+      ]
+    },
+    {
+      "text": "asking for 6 days off starting december 3rd",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 11,
+          "endPos": 11
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 11,
+          "endPos": 16
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 13,
+          "endPos": 16
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 31,
+          "endPos": 42
+        }
+      ]
+    },
+    {
+      "text": "change my next vacation",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "change my vacation 1st jan to 3rd jan and make it 4th jan to 6th jan",
+      "intent": "ReassignVacation",
+      "entities": [
+        {
+          "entity": "datetimeV2",
+          "role": "originalDate",
+          "startPos": 19,
+          "endPos": 36
+        },
+        {
+          "entity": "datetimeV2",
+          "role": "newDate",
+          "startPos": 50,
+          "endPos": 67
+        }
+      ]
+    },
+    {
+      "text": "change my vacation that was 1st august to 14th august to september 1st and september 15th",
+      "intent": "ReassignVacation",
+      "entities": [
+        {
+          "entity": "datetimeV2",
+          "role": "originalDate",
+          "startPos": 28,
+          "endPos": 52
+        },
+        {
+          "entity": "datetimeV2",
+          "role": "newDate",
+          "startPos": 57,
+          "endPos": 69
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 57,
+          "endPos": 69
+        },
+        {
+          "entity": "datetimeV2",
+          "role": "newDate",
+          "startPos": 75,
+          "endPos": 88
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 75,
+          "endPos": 88
+        }
+      ]
+    },
+    {
+      "text": "change the beginning of my vacation from jan 13th to jan 18th",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "change the end of my vacation to 13th feb",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "change the start of my vacation from jan 1st to jan 3rd",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "decline their request",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "delete my next vacation",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "do i have any vacation days left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "get me all my pending approvals",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "get me my remaining days",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "get me the balance for stuart scott",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 23,
+          "endPos": 34
+        }
+      ]
+    },
+    {
+      "text": "give me an overview of my whole team",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "give me paid time off for 1 month from june 1st",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 26,
+          "endPos": 26
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 26,
+          "endPos": 32
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 28,
+          "endPos": 32
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 39,
+          "endPos": 46
+        }
+      ]
+    },
+    {
+      "text": "give me the vendors",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "give me yanling's balance information",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "how about my balance",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many bank holidays do we have this year",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "how many days do i have in my balance",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many days off do i have left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many holidays are left",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "how many holidays left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many people are waiting for me to approve",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "how many sick days do i have left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many sick leave days do i have",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many vacation days do i have left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how many vacation days left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how mny days left",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how much pto days do i have this time",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "how much vacation is still available",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "i accept",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "i accept ahmed's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 9,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "i accept amr's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 9,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "i agree",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "i approve",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "i approve of the vacation",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "i need to submit a vacation request for 1 month after february 3rd",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 40,
+          "endPos": 40
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 40,
+          "endPos": 46
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 42,
+          "endPos": 46
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 54,
+          "endPos": 65
+        }
+      ]
+    },
+    {
+      "text": "i need to take some time off for 8 days for sick leave",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 33,
+          "endPos": 33
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 33,
+          "endPos": 38
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 35,
+          "endPos": 38
+        }
+      ]
+    },
+    {
+      "text": "i reject the vacation",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "i require the balance for amina khalil",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 26,
+          "endPos": 37
+        }
+      ]
+    },
+    {
+      "text": "i want 7 wks off",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 7,
+          "endPos": 11
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 9,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "i want time off for sick leave on wednesday",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 34,
+          "endPos": 42
+        }
+      ]
+    },
+    {
+      "text": "i want to approve their vacations show them to me",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "i want to ask for a vacation between 1st and 2nd of june",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 37,
+          "endPos": 39
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 45,
+          "endPos": 55
+        }
+      ]
+    },
+    {
+      "text": "i want to change one of my vacations",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "i want to know about all the public holidays left",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "i want to know my balance",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "i want to know the balance of my employee parashar shah",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 42,
+          "endPos": 54
+        }
+      ]
+    },
+    {
+      "text": "i want to push my vacation start date by 3 days",
+      "intent": "ReassignVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 41,
+          "endPos": 41
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 41,
+          "endPos": 46
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 43,
+          "endPos": 46
+        }
+      ]
+    },
+    {
+      "text": "i want to saee any vendor's holiday",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "i want to see abhishek shuram's balance",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 14,
+          "endPos": 28
+        }
+      ]
+    },
+    {
+      "text": "i want to see balances for everyone",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "i want to see sarah's balance for next month",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 14,
+          "endPos": 18
+        }
+      ]
+    },
+    {
+      "text": "i want to see the balances of the agents",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "i want to submit a vacation",
+      "intent": "RequestVacation",
+      "entities": []
+    },
+    {
+      "text": "i want to submit a vacation from tuesday to thursday",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 33,
+          "endPos": 39
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 44,
+          "endPos": 51
+        }
+      ]
+    },
+    {
+      "text": "i want to switch my dates from august 3rd to august 5th to be august 7th to august 10th",
+      "intent": "ReassignVacation",
+      "entities": [
+        {
+          "entity": "datetimeV2",
+          "role": "originalDate",
+          "startPos": 26,
+          "endPos": 54
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 62,
+          "endPos": 71
+        },
+        {
+          "entity": "datetimeV2",
+          "role": "newDate",
+          "startPos": 62,
+          "endPos": 86
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 76,
+          "endPos": 86
+        }
+      ]
+    },
+    {
+      "text": "i want to take paid time off for 1 week",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationUnit",
+          "startPos": 33,
+          "endPos": 33
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 33,
+          "endPos": 38
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 35,
+          "endPos": 38
+        }
+      ]
+    },
+    {
+      "text": "i want to take the days off between jan 1st to jan 20th",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 36,
+          "endPos": 42
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 47,
+          "endPos": 54
+        }
+      ]
+    },
+    {
+      "text": "i would like to request a vacation",
+      "intent": "RequestVacation",
+      "entities": []
+    },
+    {
+      "text": "i'll switch my vacation's start date from january 3rd to january 6th",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "move the end date of my vacation to the 3rd of april",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "move the start date of the next vacation to may 2nd",
+      "intent": "ReassignVacation",
+      "entities": [
+        {
+          "entity": "DateEnd",
+          "startPos": 44,
+          "endPos": 50
+        }
+      ]
+    },
+    {
+      "text": "please show anything pending",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "refuse john steven's request",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "refuse the request",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "refuse yasser's request",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "reject angela's request",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "reject for jeremy",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 11,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "reject jason sudoku's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 18
+        }
+      ]
+    },
+    {
+      "text": "reject leo's vacation",
+      "intent": "ApproveVacation",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 7,
+          "endPos": 9
+        }
+      ]
+    },
+    {
+      "text": "reject the holiday",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "reject their holiday",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "reject vacation",
+      "intent": "ApproveVacation",
+      "entities": []
+    },
+    {
+      "text": "remove my latest holiday",
+      "intent": "ReassignVacation",
+      "entities": []
+    },
+    {
+      "text": "request 3 days off",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 8,
+          "endPos": 8
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 8,
+          "endPos": 13
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 10,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "request a vacation on march 22",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 22,
+          "endPos": 29
+        }
+      ]
+    },
+    {
+      "text": "request for 13 days off for sick leave between april 1st and july 1st",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 12,
+          "endPos": 13
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 12,
+          "endPos": 18
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 15,
+          "endPos": 18
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 47,
+          "endPos": 55
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 61,
+          "endPos": 68
+        }
+      ]
+    },
+    {
+      "text": "request for 17 days off for sick leave",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 12,
+          "endPos": 13
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 12,
+          "endPos": 18
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 15,
+          "endPos": 18
+        }
+      ]
+    },
+    {
+      "text": "request vacation from april 3rd to april 6th",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 22,
+          "endPos": 30
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 35,
+          "endPos": 43
+        }
+      ]
+    },
+    {
+      "text": "requesting 7 days off starting the 4th of july",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 11,
+          "endPos": 11
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 11,
+          "endPos": 16
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 13,
+          "endPos": 16
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 35,
+          "endPos": 45
+        }
+      ]
+    },
+    {
+      "text": "requesting pto from the 3rd to the 5th of january",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 24,
+          "endPos": 26
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 35,
+          "endPos": 48
+        }
+      ]
+    },
+    {
+      "text": "show me abdulrahman osama's balance",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 24
+        }
+      ]
+    },
+    {
+      "text": "show me all my fte vacations",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "show me all the agents balances",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "show me all the pending approvals i need to do",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "show me all the public holidays",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "show me all the public holidays this year",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "show me darren's balance",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "show me everyone in the team's balance",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "show me ignored approvals",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "show me jason's remaining days",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "show me my vacation balance",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "show me the public vacations between april and july",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "show me vacations and holidays for anyone that's a csg",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "show me vendor's holiday",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "show the balances for all the full time employees",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "submit 6 day of pto starting wednesday",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 7,
+          "endPos": 7
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 7,
+          "endPos": 11
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 9,
+          "endPos": 11
+        }
+      ]
+    },
+    {
+      "text": "submit pto from april 27th to april 31st",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 16,
+          "endPos": 25
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 30,
+          "endPos": 39
+        }
+      ]
+    },
+    {
+      "text": "submit sick leave for 3 days starts march 13th",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 22,
+          "endPos": 22
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 22,
+          "endPos": 27
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 24,
+          "endPos": 27
+        },
+        {
+          "entity": "DateStart",
+          "startPos": 36,
+          "endPos": 45
+        }
+      ]
+    },
+    {
+      "text": "submit vacation request between jan 3 and jan 7",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 32,
+          "endPos": 36
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 42,
+          "endPos": 46
+        }
+      ]
+    },
+    {
+      "text": "want a vacation between april 1 and june 2",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "DateStart",
+          "startPos": 24,
+          "endPos": 30
+        },
+        {
+          "entity": "DateEnd",
+          "startPos": 36,
+          "endPos": 41
+        }
+      ]
+    },
+    {
+      "text": "want to submit sick leave for 3 days starting may 7th",
+      "intent": "RequestVacation",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 30,
+          "endPos": 30
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 30,
+          "endPos": 35
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 32,
+          "endPos": 35
+        }
+      ]
+    },
+    {
+      "text": "what are the bank holidays from jan 1 to jan 30th",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "what are the public bank holidays in the coming 2 months",
+      "intent": "PublicHolidayAwareness",
+      "entities": [
+        {
+          "entity": "VacationNumber",
+          "startPos": 48,
+          "endPos": 48
+        },
+        {
+          "entity": "VacationAmount",
+          "startPos": 48,
+          "endPos": 55
+        },
+        {
+          "entity": "VacationUnit",
+          "startPos": 50,
+          "endPos": 55
+        }
+      ]
+    },
+    {
+      "text": "what are the public holidays next month",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "what are the vacation days of my whole team",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "what are the vacations for the agents",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "what is hazem's vacation balance",
+      "intent": "EmployeeStatusInquiry",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 8,
+          "endPos": 12
+        }
+      ]
+    },
+    {
+      "text": "what is left to approve",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "what is my vacation balance",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "what is pending still",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "whats my balance",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "whats the rest of my balance look like",
+      "intent": "BalanceStatus",
+      "entities": []
+    },
+    {
+      "text": "when's the next holiday off",
+      "intent": "PublicHolidayAwareness",
+      "entities": []
+    },
+    {
+      "text": "which approvals are hanging",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "which approvals need me",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "which people are hanging on me",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "who do i need to approve for vacation",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "who do i need to unblock",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "who is still pending on me?",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "who is waiting on me",
+      "intent": "GetPendingApprovals",
+      "entities": []
+    },
+    {
+      "text": "whole team's balance",
+      "intent": "CollectTeamVacation",
+      "entities": []
+    },
+    {
+      "text": "yeah go ahead approve that vacation",
+      "intent": "ApproveVacation",
+      "entities": []
+    }
+  ],
+  "settings": []
+}
