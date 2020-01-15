@@ -11,6 +11,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.BotBuilderSamples.Dialogs
 {
@@ -18,26 +19,110 @@ namespace Microsoft.BotBuilderSamples.Dialogs
     {
         private readonly FlightBookingRecognizer _luisRecognizer;
         protected readonly ILogger Logger;
+        private string connectionName;
 
         // Dependency injection uses this constructor to instantiate MainDialog
-        public MainDialog(FlightBookingRecognizer luisRecognizer, BookingDialog bookingDialog, ILogger<MainDialog> logger)
+        public MainDialog(FlightBookingRecognizer luisRecognizer, BookingDialog bookingDialog, ILogger<MainDialog> logger, IConfiguration configuration)
             : base(nameof(MainDialog))
         {
             _luisRecognizer = luisRecognizer;
             Logger = logger;
 
             AddDialog(new TextPrompt(nameof(TextPrompt)));
-            AddDialog(bookingDialog);
+            //AddDialog(bookingDialog);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
-                IntroStepAsync,
-                ActStepAsync,
-                FinalStepAsync,
+                //IntroStepAsync,
+                //ActStepAsync,
+                //FinalStepAsync,
+
+                PromptStepAsync,
+                LoginStepAsync,
+                AfterLogin,
+                AfterLoginCheck
+            }));
+
+            connectionName = configuration["ConnectionName"];
+
+            AddDialog(new OAuthPrompt(
+            nameof(OAuthPrompt),
+            new OAuthPromptSettings
+            {
+                ConnectionName = connectionName,
+                Text = "Please Sign In",
+                Title = "Sign In",
+                Timeout = 300000, // User has 5 minutes to login (1000 * 60 * 5)
             }));
 
             // The initial child Dialog to run.
             InitialDialogId = nameof(WaterfallDialog);
         }
+
+
+        private async Task<DialogTurnResult> PromptStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var tokenResponse = (TokenResponse)stepContext.Result;
+
+            if (tokenResponse != null)
+            {
+                //return await stepContext.EndDialogAsync();
+                return await stepContext.NextAsync();
+            }
+            else
+            {
+                return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
+            }
+        }
+
+        private async Task<DialogTurnResult> LoginStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            // Get the token from the previous step. Note that we could also have gotten the
+            // token directly from the prompt itself. There is an example of this in the next method.
+            var tokenResponse = (TokenResponse)stepContext.Result;
+            // if token exists
+            if (tokenResponse != null)
+            {
+                var messageText = stepContext.Options?.ToString() ?? "You are logged in";
+                return await stepContext.NextAsync();
+            }
+
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text("Login was not successful please try again."), cancellationToken);
+            return await stepContext.EndDialogAsync();
+        }
+
+        private async Task<DialogTurnResult> AfterLogin(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> AfterLoginCheck(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var tokenResponse = (TokenResponse)stepContext.Result;
+            var messageText = tokenResponse.Token;
+            var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
+            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
+
+        }
+
+        private async Task<DialogTurnResult> InterruptAsync(DialogContext innerDc, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (innerDc.Context.Activity.Type == ActivityTypes.Message)
+            {
+                var text = innerDc.Context.Activity.Text.ToLowerInvariant();
+
+                if (text == "logout")
+                {
+                    // The bot adapter encapsulates the authentication processes.
+                    var botAdapter = (BotFrameworkAdapter)innerDc.Context.Adapter;
+                    await botAdapter.SignOutUserAsync(innerDc.Context, connectionName, null, cancellationToken);
+                    await innerDc.Context.SendActivityAsync(MessageFactory.Text("You have been signed out."), cancellationToken);
+                    return await innerDc.CancelAllDialogsAsync(cancellationToken);
+                }
+            }
+
+            return null;
+        }
+
 
         private async Task<DialogTurnResult> IntroStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
@@ -53,10 +138,13 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             var messageText = stepContext.Options?.ToString() ?? "What can I help you with today?\nSay something like \"Book a flight from Paris to Berlin on March 22, 2020\"";
             var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
+
+            return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
         }
 
         private async Task<DialogTurnResult> ActStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+           
             if (!_luisRecognizer.IsConfigured)
             {
                 // LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
