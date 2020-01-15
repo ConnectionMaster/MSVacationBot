@@ -33,15 +33,16 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             //AddDialog(bookingDialog);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[]
             {
-                //IntroStepAsync,
+                IntroStepAsync,
                 //ActStepAsync,
                 //FinalStepAsync,
 
-                PromptStepAsync,
-                LoginStepAsync,
-                AfterLogin,
-                AfterLoginCheck,
+                //PromptStepAsync,
+                //LoginStepAsync,
+                //AfterLogin,
+                //AfterLoginCheck,
                 LuisEchoStepAsync,
+                FinalStepAsync,
             }));
 
             connectionName = configuration["ConnectionName"];
@@ -74,7 +75,10 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             // if token exists
             if (tokenResponse != null)
             {
-                var messageText = stepContext.Options?.ToString() ?? "You are logged in";
+                //var messageText = stepContext.Options?.ToString() ?? "You are logged in";
+                //var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+                //await stepContext.Context.SendActivityAsync(message, cancellationToken);
+
                 return await stepContext.NextAsync();
             }
 
@@ -91,11 +95,23 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
         private async Task<DialogTurnResult> AfterLoginCheck(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            //var tokenResponse = (TokenResponse)stepContext.Result;
+            //var messageText = tokenResponse.Token;
+            //var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
+            //return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
             var tokenResponse = (TokenResponse)stepContext.Result;
-            var messageText = tokenResponse.Token;
-            var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
-            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
 
+            if (tokenResponse != null)
+            {
+                var messageText = stepContext.Options?.ToString() ?? "You are logged in";
+                var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+                await stepContext.Context.SendActivityAsync(message, cancellationToken);
+
+            }else
+            {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Login was not successful please try again."), cancellationToken);
+            }
+            return await stepContext.NextAsync();
         }
 
         private async Task<DialogTurnResult> InterruptAsync(DialogContext innerDc, CancellationToken cancellationToken = default(CancellationToken))
@@ -132,8 +148,6 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             var messageText = stepContext.Options?.ToString() ?? "What can I help you with today?\nSay something like \"Request vacation on March 22 2020\"";
             var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
             return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
-
-            return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
         }
 
         private async Task<DialogTurnResult> ActStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -213,18 +227,18 @@ namespace Microsoft.BotBuilderSamples.Dialogs
         {
             // If the child dialog ("BookingDialog") was cancelled, the user failed to confirm or if the intent wasn't BookFlight
             // the Result here will be null.
-            if (stepContext.Result is BookingDetails result)
-            {
-                // Now we have all the booking details call the booking service.
+            //if (stepContext.Result is BookingDetails result)
+            //{
+            //    // Now we have all the booking details call the booking service.
 
-                // If the call to the booking service was successful tell the user.
+            //    // If the call to the booking service was successful tell the user.
 
-                var timeProperty = new TimexProperty(result.TravelDate);
-                var travelDateMsg = timeProperty.ToNaturalLanguage(DateTime.Now);
-                var messageText = $"I have you booked to {result.Destination} from {result.Origin} on {travelDateMsg}";
-                var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
-                await stepContext.Context.SendActivityAsync(message, cancellationToken);
-            }
+            //    var timeProperty = new TimexProperty(result.TravelDate);
+            //    var travelDateMsg = timeProperty.ToNaturalLanguage(DateTime.Now);
+            //    var messageText = $"I have you booked to {result.Destination} from {result.Origin} on {travelDateMsg}";
+            //    var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+            //    await stepContext.Context.SendActivityAsync(message, cancellationToken);
+            //}
 
             // Restart the main dialog with a different message the second time around
             var promptMessage = "What else can I do for you?";
@@ -285,8 +299,8 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
             await stepContext.Context.SendActivityAsync(message, cancellationToken);
 
-            return await stepContext.EndDialogAsync();
-            // return await stepContext.NextAsync(null, cancellationToken);
+            //return await stepContext.EndDialogAsync();
+            return await stepContext.NextAsync(null, cancellationToken);
         }
     }
 }
