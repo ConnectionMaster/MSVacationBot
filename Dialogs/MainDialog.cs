@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using Microsoft.Extensions.Configuration;
 using Luis;
+using CoreBot.MSVacation.Sevices;
 
 namespace Microsoft.BotBuilderSamples.Dialogs
 {
@@ -64,7 +65,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
         private async Task<DialogTurnResult> PromptStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-                return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
+            return await stepContext.BeginDialogAsync(nameof(OAuthPrompt), null, cancellationToken);
         }
 
         private async Task<DialogTurnResult> LoginStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -83,7 +84,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             }
 
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("Login was not successful please try again."), cancellationToken);
-            
+
             // return await stepContext.EndDialogAsync();
             return await stepContext.NextAsync(null, cancellationToken);
         }
@@ -107,7 +108,8 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
                 await stepContext.Context.SendActivityAsync(message, cancellationToken);
 
-            }else
+            }
+            else
             {
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text("Login was not successful please try again."), cancellationToken);
             }
@@ -152,7 +154,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
         private async Task<DialogTurnResult> ActStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-           
+
             if (!_luisRecognizer.IsConfigured)
             {
                 // LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
@@ -247,7 +249,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
         private async Task<DialogTurnResult> LuisEchoStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-           
+
             if (!_luisRecognizer.IsConfigured)
             {
                 // LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
@@ -262,38 +264,65 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             switch (luisResult.TopIntent().intent)
             {
                 case MSVacationBot.Intent.ApproveVacation:
-                    messageText = "Intent.ApproveVacation";
+                    //messageText = "Intent.ApproveVacation";
+                    messageText = "Vacation Approved!";
                     break;
                 case MSVacationBot.Intent.BalanceStatus:
-                    messageText = "Intent.BalanceStatus";
+                    var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
+                    //messageText = "Intent.BalanceStatus";
+                    messageText = $"Getting your vacation balance information...\nYou have {status.RemainingDays} remaining days.";
                     break;
                 case MSVacationBot.Intent.CollectTeamVacation:
-                    messageText = "Intent.CollectTeamVacation";
-                    break;
+                    {
+                        //messageText = "Intent.CollectTeamVacation";
+                        var requests = RequestService.Instance.GetTeamVacations(Guid.NewGuid());
+                        messageText = $"Your team collected vacations are:" +
+                        string.Join(", ", requests.Select(request => $"{request.Emplyee.FirstName} from {request.StartData} to {request.EndData}"));
+                        break;
+                    }
                 case MSVacationBot.Intent.EmployeeStatusInquiry:
-                    messageText = "Intent.EmployeeStatusInquiry";
+                    //messageText = "Intent.EmployeeStatusInquiry";
+                    messageText = "You have no pending requests (status inquiry)";
                     break;
                 case MSVacationBot.Intent.GetPendingApprovals:
-                    messageText = "Intent.GetPendingApprovals";
-                    break;
+                    {
+                        var requests = RequestService.Instance.GetEmployeePendingRequests(Guid.NewGuid());
+                        //messageText = "Intent.GetPendingApprovals";
+                        messageText = "Intent.GetPendingApprovals";
+                        messageText = $"Your pending approvals are:" +
+                        string.Join(", ", requests.Select(request => $"{request.Emplyee.FirstName} from {request.StartData} to {request.EndData}"));
+
+                        break;
+                    }
                 case MSVacationBot.Intent.None:
-                    messageText = "Intent.None";
+                    //messageText = "Intent.None";
+                    messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
+
                     break;
                 case MSVacationBot.Intent.PublicHolidayAwareness:
-                    messageText = "Intent.PublicHolidayAwareness";
+                    //messageText = "Intent.PublicHolidayAwareness";
+                    {
+                        var holidays = PublicHolidaysService.Instance.GetPublicHolidays();
+                   
+                        messageText = $"Public holiday for this year are: " +
+                        string.Join(", ", holidays.Select(h => $"{h.Name} on {h.Date}"));
+
+                    }
                     break;
                 case MSVacationBot.Intent.ReassignVacation:
-                    messageText = "Intent.ReassignVacation";
+                    //messageText = "Intent.ReassignVacation";
+                    messageText = "Vacation reassigned successfully";
                     break;
                 case MSVacationBot.Intent.RequestVacation:
-                    messageText = "Intent.RequestVacation";
+                    //messageText = "Intent.RequestVacation";
+                    messageText = "Vacation request submitted successfully";
                     break;
 
 
                 default:
                     // Catch all for unhandled intents
-                        messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
-                     break;
+                    messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
+                    break;
             }
 
             var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
