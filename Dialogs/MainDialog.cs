@@ -14,6 +14,8 @@ using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using Microsoft.Extensions.Configuration;
 using Luis;
 using CoreBot.MSVacation.Sevices;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace Microsoft.BotBuilderSamples.Dialogs
 {
@@ -264,6 +266,27 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             return await stepContext.ReplaceDialogAsync(InitialDialogId, promptMessage, cancellationToken);
         }
 
+        private Attachment CreateAdaptiveCardAttachment(string text)
+        {
+            var cardResourcePath = "CoreBot.Cards.answerCard.json";
+
+            using (var stream = GetType().Assembly.GetManifestResourceStream(cardResourcePath))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    var adaptiveCard = reader.ReadToEnd();
+                    var json = JsonConvert.DeserializeObject(adaptiveCard);
+                    var x = (Dictionary<string, List<Dictionary<string, object>>>)(json);
+                    x["body"][0]["text"] = text;
+                    return new Attachment()
+                    {
+                        ContentType = "application/vnd.microsoft.card.adaptive",
+                        Content = json,
+                    };
+                }
+            }
+        }
+
         private async Task<DialogTurnResult> LuisEchoStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
 
@@ -324,6 +347,10 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 approveVacation = approveRejectList[0][0] == "Approve" ? true : false;
             }
             var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
+
+
+            
+
 
             switch (luisResult.TopIntent().intent)
             {
@@ -450,18 +477,17 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
                     break;
             }
-            /*//Vacations dates
-            var startDate = luisResult?.Entities?.DateStart;
-            var endDate = luisResult?.Entities?.DateEnd;
-            var dateV2 = luisResult?.Entities?.datetime;
 
-            var originalDate = luisResult?.Entities?.originalDate;
-            var newDate = luisResult?.Entities?.newDate;
+            // Adaptive card
 
-            // Vacation amount
-            var vacationAmount = luisResult?.Entities?.VacationAmount;*/
-            var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
-            await stepContext.Context.SendActivityAsync(message, cancellationToken);
+            // Create card
+            var welcomeCard = CreateAdaptiveCardAttachment(messageText);
+            var response = MessageFactory.Attachment(welcomeCard, ssml: messageText);
+            await stepContext.Context.SendActivityAsync(response, cancellationToken);
+
+            // Normal response
+            //var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+            //await stepContext.Context.SendActivityAsync(message, cancellationToken);
 
             //return await stepContext.EndDialogAsync();
             return await stepContext.NextAsync(null, cancellationToken);

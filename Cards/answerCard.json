@@ -1,0 +1,32 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "default",
+      "weight": "bolder",
+      "text": "",
+      "wrap": true,
+      "maxLines": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "OK",
+      "data": {
+        "prop1": true,
+        "prop2": []
+      }
+
+
+    }
+    //{
+    //  "type": "Action.Submit",
+    //  "title": "Cancel"
+    //},
+  ]
+}
