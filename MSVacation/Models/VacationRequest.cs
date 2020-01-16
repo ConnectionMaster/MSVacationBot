@@ -9,7 +9,7 @@ namespace CoreBot.MSVacation.Models
     {
         public Guid RequestId { get; set; }
 
-        public Employee Emplyee { get; set; }
+        public Employee Employee { get; set; }
 
         public VacationType Type { get; set; }
 

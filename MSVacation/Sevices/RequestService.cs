@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using CoreBot.MSVacation.Models;
 
-namespace CoreBot.MSVacation.Sevices
+namespace CoreBot.MSVacation.Services
 {
     public class RequestService
     {
         private readonly EmployeeService _employeeService;
-
-        public static RequestService Instance { get; } =
-            new RequestService(EmployeeService.Instance);
 
         public RequestService(EmployeeService employeeService)
         {
@@ -22,7 +19,7 @@ namespace CoreBot.MSVacation.Sevices
             var request = new VacationRequest
             {
                 RequestId = Guid.NewGuid(),
-                Emplyee = _employeeService.GetById(employeeId),
+                Employee = _employeeService.GetById(employeeId),
                 StartData = startDate,
                 EndData = endDate,
                 TimeZone = timeZoneInfo ?? TimeZoneInfo.Local,
@@ -46,7 +43,7 @@ namespace CoreBot.MSVacation.Sevices
                 var request = new VacationRequest
                 {
                     RequestId = Guid.NewGuid(),
-                    Emplyee = _employeeService.GetById(employeeId),
+                    Employee = _employeeService.GetById(employeeId),
                     StartData = startDate,
                     EndData = endDate,
                     TimeZone = TimeZoneInfo.Local,
@@ -63,7 +60,7 @@ namespace CoreBot.MSVacation.Sevices
                 var request = new VacationRequest
                 {
                     RequestId = Guid.NewGuid(),
-                    Emplyee = _employeeService.GetById(employeeId),
+                    Employee = _employeeService.GetById(employeeId),
                     StartData = startDate,
                     EndData = endDate,
                     TimeZone = TimeZoneInfo.Local,
@@ -89,7 +86,7 @@ namespace CoreBot.MSVacation.Sevices
             var request = new VacationRequest
             {
                 RequestId = requestId,
-                Emplyee = _employeeService.GetById(Guid.NewGuid()),
+                Employee = _employeeService.GetById(Guid.NewGuid()),
                 StartData = DateTime.Today.Subtract(TimeSpan.FromDays(20)),
                 EndData = DateTime.Today.Subtract(TimeSpan.FromDays(15)),
                 TimeZone = TimeZoneInfo.Local,

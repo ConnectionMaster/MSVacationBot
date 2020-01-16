@@ -9,6 +9,7 @@ using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.BotBuilderSamples.Bots;
 using Microsoft.BotBuilderSamples.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
+using CoreBot.MSVacation.Services;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -42,6 +43,12 @@ namespace Microsoft.BotBuilderSamples
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, DialogAndWelcomeBot<MainDialog>>();
+
+            services.AddSingleton<MSVacationService>();
+            services.AddSingleton<EmployeeService>();
+            services.AddSingleton<RequestService>();
+            services.AddSingleton<BalanceService>();
+            services.AddSingleton<PublicHolidaysService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

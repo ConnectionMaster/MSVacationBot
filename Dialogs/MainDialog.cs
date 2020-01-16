@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using Microsoft.Extensions.Configuration;
 using Luis;
-using CoreBot.MSVacation.Sevices;
+using CoreBot.MSVacation.Services;
 
 namespace Microsoft.BotBuilderSamples.Dialogs
 {
@@ -22,11 +22,13 @@ namespace Microsoft.BotBuilderSamples.Dialogs
         private readonly FlightBookingRecognizer _luisRecognizer;
         protected readonly ILogger Logger;
         private string connectionName;
+        private readonly MSVacationService _mSVacationService;
 
         // Dependency injection uses this constructor to instantiate MainDialog
-        public MainDialog(FlightBookingRecognizer luisRecognizer, BookingDialog bookingDialog, ILogger<MainDialog> logger, IConfiguration configuration)
+        public MainDialog(FlightBookingRecognizer luisRecognizer, BookingDialog bookingDialog, ILogger<MainDialog> logger, IConfiguration configuration, MSVacationService mSVacationService)
             : base(nameof(MainDialog))
         {
+            _mSVacationService = mSVacationService;
             _luisRecognizer = luisRecognizer;
             Logger = logger;
 
@@ -323,7 +325,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             {
                 approveVacation = approveRejectList[0][0] == "Approve" ? true : false;
             }
-            var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
+            var status = _mSVacationService.Balance.GetStatus(Guid.NewGuid());
 
             switch (luisResult.TopIntent().intent)
             {
@@ -347,9 +349,9 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 case MSVacationBot.Intent.CollectTeamVacation:
                     {
                         //messageText = "Intent.CollectTeamVacation";
-                        var requests = RequestService.Instance.GetTeamVacations(Guid.NewGuid());
+                        var requests = _mSVacationService.Requests.GetTeamVacations(Guid.NewGuid());
                         messageText = $"Your team collected vacations are:" +
-                        string.Join(", ", requests.Select(request => $"{request.Emplyee.FirstName} from {request.StartData} to {request.EndData}"));
+                        string.Join(", ", requests.Select(request => $"{request.Employee.FirstName} from {request.StartData} to {request.EndData}"));
                         break;
                     }
                 case MSVacationBot.Intent.EmployeeStatusInquiry:
@@ -359,11 +361,11 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     break;
                 case MSVacationBot.Intent.GetPendingApprovals:
                     {
-                        var requests = RequestService.Instance.GetEmployeePendingRequests(Guid.NewGuid());
+                        var requests = _mSVacationService.Requests.GetEmployeePendingRequests(Guid.NewGuid());
                         //messageText = "Intent.GetPendingApprovals";
                         messageText = "Intent.GetPendingApprovals";
                         messageText = $"Your pending approvals are:" +
-                        string.Join(", ", requests.Select(request => $"{request.Emplyee.FirstName} from {request.StartData} to {request.EndData}"));
+                        string.Join(", ", requests.Select(request => $"{request.Employee.FirstName} from {request.StartData} to {request.EndData}"));
 
                         break;
                     }
@@ -375,7 +377,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 case MSVacationBot.Intent.PublicHolidayAwareness:
                     //messageText = "Intent.PublicHolidayAwareness";
                     {
-                        var holidays = PublicHolidaysService.Instance.GetPublicHolidays();
+                        var holidays = _mSVacationService.PublicHolidays.GetPublicHolidays();
                    
                         messageText = $"Public holiday for this year are: " +
                         string.Join(", ", holidays.Select(h => $"{h.Name} on {h.Date}"));

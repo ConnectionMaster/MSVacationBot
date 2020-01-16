@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using CoreBot.MSVacation.Models;
 
-namespace CoreBot.MSVacation.Sevices
+namespace CoreBot.MSVacation.Services
 {
     public class PublicHolidaysService
     {
-        public static PublicHolidaysService Instance { get; } = new PublicHolidaysService();
-
         public IReadOnlyCollection<PublicHoliday> GetPublicHolidays()
         {
             return new List<PublicHoliday>
