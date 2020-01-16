@@ -316,6 +316,13 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             var vacationAmountArray = luisResult?.Entities?.VacationAmount;
             var vacationAmount = vacationAmountArray != null && vacationAmountArray.Length > 0 ? vacationAmountArray[0] : null;
 
+            // Aprrove entities
+            var approveRejectList = luisResult?.Entities?.ApproveRejectList;
+            var approveVacation = true;
+            if(approveRejectList != null && approveRejectList.Length > 0 && approveRejectList[0].Length > 0)
+            {
+                approveVacation = approveRejectList[0][0] == "Approve" ? true : false;
+            }
             var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
 
             switch (luisResult.TopIntent().intent)
@@ -323,7 +330,13 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 case MSVacationBot.Intent.ApproveVacation:
                     //messageText = "Intent.ApproveVacation";
                     
-                    messageText = $"{personName} Vacation Approved!";
+                    if(approveVacation)
+                    {
+                        messageText = $"{personName} Vacation Approved!";
+                    }else
+                    {
+                        messageText = $"{personName} Vacation Rejected!";
+                    }
                     break;
                 case MSVacationBot.Intent.BalanceStatus:
                     //messageText = "Intent.BalanceStatus";
@@ -381,17 +394,21 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                         messageText += $"\n\nNew date : {newDate}";
                     }else
                     {
-                        if (startDate != null)
+                        
+                        if (dateV2 != null)
                         {
-                            messageText += $"\n\nNew Start date : {startDate}";
-                        }
-                        else if (dateV2 != null)
+                            messageText += $"\n\nNew date : {dateV2}";
+                        } else
                         {
-                            messageText += $"\n\nNew End date : {dateV2}";
-                        }
-                        if (endDate != null)
-                        {
-                            messageText += $"\n\nEnd date : {endDate}";
+                            if (startDate != null)
+                            {
+                                messageText += $"\n\nNew Start date : {startDate}";
+                            }
+
+                            if (endDate != null)
+                            {
+                                messageText += $"\n\nEnd date : {endDate}";
+                            }
                         }
                     }
                     
@@ -403,17 +420,20 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 case MSVacationBot.Intent.RequestVacation:
                     //messageText = "Intent.RequestVacation";
                     messageText = "Vacation request submitted successfully";
-                    if(startDate != null)
+                    
+                    if(dateV2 != null)
                     {
-                        messageText += $"\n\nStart date : {startDate}";
-                    }
-                    else if(dateV2 != null)
+                        messageText += $"\n\nDate : {dateV2}";
+                    }else
                     {
-                        messageText += $"\n\nStart date : {dateV2}";
-                    }
-                    if(endDate != null)
-                    {
-                        messageText += $"\n\nEnd date : {endDate}";
+                        if (startDate != null)
+                        {
+                            messageText += $"\n\nStart date : {startDate}";
+                        }
+                        if (endDate != null)
+                        {
+                            messageText += $"\n\nEnd date : {endDate}";
+                        }
                     }
                     if(vacationAmount != null)
                     {
