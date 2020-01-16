@@ -3,22 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreBot.MSVacation.Models;
+using Microsoft.Bot.Builder;
 
-namespace CoreBot.MSVacation.Sevices
+namespace CoreBot.MSVacation.Services
 {
-    public class EmployeeService
+    public class EmployeeService : BaseService
     {
-        public static EmployeeService Instance { get; } = new EmployeeService();
+        public EmployeeService(IStorage storage)
+            : base(storage)
+        {
+        }
 
         public Employee GetById(Guid employeeId)
         {
-            return new Employee
+            var employee = new Employee
             {
                 Id = employeeId,
                 FirstName = "John",
                 LastName = "Doe",
                 Manager = null
             };
+            Storage.WriteAsync(new Dictionary<string, object>
+            {
+                [employeeId.ToString()] = employee,
+            }).Wait();
+            var o = Storage.ReadAsync(new string[] { employeeId.ToString() }).Result as Employee;
+
+            return employee;
         }
 
         public IReadOnlyCollection<Employee> GetDirectReports(Guid employeeId)

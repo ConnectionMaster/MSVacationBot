@@ -1,16 +1,15 @@
 ﻿using System;
 using CoreBot.MSVacation.Models;
+using Microsoft.Bot.Builder;
 
-namespace CoreBot.MSVacation.Sevices
+namespace CoreBot.MSVacation.Services
 {
-    public class BalanceService
+    public class BalanceService : BaseService
     {
         private readonly EmployeeService _employeeService;
 
-        public static BalanceService Instance { get; } =
-            new BalanceService(EmployeeService.Instance);
-
-        public BalanceService(EmployeeService employeeService)
+        public BalanceService(IStorage storage, EmployeeService employeeService)
+            : base(storage)
         {
             _employeeService = employeeService;
         }
