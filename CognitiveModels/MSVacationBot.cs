@@ -27,7 +27,8 @@ namespace Luis
             None, 
             PublicHolidayAwareness, 
             ReassignVacation, 
-            RequestVacation
+            RequestVacation,
+            Greetings
         };
         [JsonProperty("intents")]
         public Dictionary<Intent, IntentScore> Intents;

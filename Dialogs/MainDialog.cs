@@ -327,6 +327,9 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
             switch (luisResult.TopIntent().intent)
             {
+                case MSVacationBot.Intent.Greetings:
+                    messageText = $"Cheers :)";
+                    break;
                 case MSVacationBot.Intent.ApproveVacation:
                     //messageText = "Intent.ApproveVacation";
                     
