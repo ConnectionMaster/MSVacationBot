@@ -379,8 +379,8 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     {
                         var holidays = _mSVacationService.PublicHolidays.GetPublicHolidays();
                    
-                        messageText = $"Public holiday for this year are: " +
-                        string.Join(", ", holidays.Select(h => $"{h.Name} on {h.Date}"));
+                        messageText = $"Public holiday for this year are:\n" +
+                        string.Join("\n", holidays.Select(h => $"- {h.Date.ToShortDateString()}: {h.Name}"));
 
                     }
                     break;
