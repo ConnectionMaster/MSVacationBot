@@ -242,8 +242,25 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             //    await stepContext.Context.SendActivityAsync(message, cancellationToken);
             //}
 
+
+                var messageText = "What else can I do for you?";
+                messageText += $"\n\nSupported features:";
+                messageText += $"\n\n1-Request vacation on a specific date";
+                messageText += $"\n\n2-Request vacation on from date to date";
+                messageText += $"\n\n3-Approve a person vacation";
+                messageText += $"\n\n4-Show your vacation balance";
+                messageText += $"\n\n5-View team vacations";
+                messageText += $"\n\n6-Show your pending approvals";
+                messageText += $"\n\n7-View public holidays";
+                messageText += $"\n\n8-Switch your vacation date from date to another date";
+                messageText += $"\n\n9-Ask about a person vacation balance";
+
+            var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+                await stepContext.Context.SendActivityAsync(message, cancellationToken);
+
+
             // Restart the main dialog with a different message the second time around
-            var promptMessage = "What else can I do for you?";
+            var promptMessage = "Go ahead try something out! :)";
             return await stepContext.ReplaceDialogAsync(InitialDialogId, promptMessage, cancellationToken);
         }
 
@@ -261,16 +278,58 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
             var messageText = "";
 
+            // Extract entities
+
+            // Person
+            var persons = luisResult?.Entities?.Person;
+            var personName = "";
+            if (persons != null && persons.Length > 0)
+            {
+                personName = persons[0] ?? "";
+            }
+
+            // Vacation type
+            var vacationTypes = luisResult?.Entities?.VacationTypes;
+            var vacationType = "";
+            if (vacationTypes != null && vacationTypes.Length > 0 && vacationTypes[0].Length > 0)
+            {
+                vacationType = vacationTypes[0][0] ?? "";
+            }
+
+            //Vacations dates
+            var startDateArray = luisResult?.Entities?.DateStart;
+            var startDate = startDateArray != null && startDateArray.Length > 0 ? startDateArray[0]?.Split('T')[0] : null;
+
+            var endDateArray = luisResult?.Entities?.DateEnd;
+            var endDate = endDateArray != null && endDateArray.Length > 0 ? endDateArray[0]?.Split('T')[0] : null;
+
+            var dateV2Array = luisResult?.Entities?.datetime;
+            var dateV2 = dateV2Array != null && dateV2Array.Length > 0 && dateV2Array[0]?.Expressions[0].Length > 0 ? dateV2Array[0]?.Expressions[0]?.Split('T')[0] : null;
+
+            var originalDateArray = luisResult?.Entities?.originalDate;
+            var originalDate = originalDateArray != null && originalDateArray.Length > 0 && originalDateArray[0]?.Expressions[0].Length > 0 ? originalDateArray[0]?.Expressions[0]?.Split('T')[0] : null;
+
+            var newDateArray = luisResult?.Entities?.newDate;
+            var newDate = newDateArray != null && newDateArray.Length > 0 && newDateArray[0]?.Expressions[0].Length > 0 ? newDateArray[0]?.Expressions[0]?.Split('T')[0] : null;
+
+            // Vacation amount
+            var vacationAmountArray = luisResult?.Entities?.VacationAmount;
+            var vacationAmount = vacationAmountArray != null && vacationAmountArray.Length > 0 ? vacationAmountArray[0] : null;
+
+            var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
+
             switch (luisResult.TopIntent().intent)
             {
                 case MSVacationBot.Intent.ApproveVacation:
                     //messageText = "Intent.ApproveVacation";
-                    messageText = "Vacation Approved!";
+                    
+                    messageText = $"{personName} Vacation Approved!";
                     break;
                 case MSVacationBot.Intent.BalanceStatus:
-                    var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
                     //messageText = "Intent.BalanceStatus";
-                    messageText = $"Getting your vacation balance information...\nYou have {status.RemainingDays} remaining days.";
+
+                    //var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
+                    messageText = $"\nYou have {status.RemainingDays} {vacationType} days left in your balance";
                     break;
                 case MSVacationBot.Intent.CollectTeamVacation:
                     {
@@ -282,7 +341,8 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     }
                 case MSVacationBot.Intent.EmployeeStatusInquiry:
                     //messageText = "Intent.EmployeeStatusInquiry";
-                    messageText = "You have no pending requests (status inquiry)";
+                    
+                    messageText = $"{(personName != null && personName.Length > 0 ? (personName + " has"): "You have")} {status.RemainingDays} remaining days";
                     break;
                 case MSVacationBot.Intent.GetPendingApprovals:
                     {
@@ -296,7 +356,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     }
                 case MSVacationBot.Intent.None:
                     //messageText = "Intent.None";
-                    messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
+                    messageText = $"Sorry, I didn't get that. Please try asking in a different way :)";
 
                     break;
                 case MSVacationBot.Intent.PublicHolidayAwareness:
@@ -312,10 +372,53 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                 case MSVacationBot.Intent.ReassignVacation:
                     //messageText = "Intent.ReassignVacation";
                     messageText = "Vacation reassigned successfully";
+                    if(originalDate != null)
+                    {
+                        messageText += $"\n\nOriginal date : {originalDate}";
+                    }
+                    if(newDate != null)
+                    {
+                        messageText += $"\n\nNew date : {newDate}";
+                    }else
+                    {
+                        if (startDate != null)
+                        {
+                            messageText += $"\n\nNew Start date : {startDate}";
+                        }
+                        else if (dateV2 != null)
+                        {
+                            messageText += $"\n\nNew End date : {dateV2}";
+                        }
+                        if (endDate != null)
+                        {
+                            messageText += $"\n\nEnd date : {endDate}";
+                        }
+                    }
+                    
+                    if (vacationAmount != null)
+                    {
+                        messageText += $"\n\nAmount : {vacationAmount}";
+                    }
                     break;
                 case MSVacationBot.Intent.RequestVacation:
                     //messageText = "Intent.RequestVacation";
                     messageText = "Vacation request submitted successfully";
+                    if(startDate != null)
+                    {
+                        messageText += $"\n\nStart date : {startDate}";
+                    }
+                    else if(dateV2 != null)
+                    {
+                        messageText += $"\n\nStart date : {dateV2}";
+                    }
+                    if(endDate != null)
+                    {
+                        messageText += $"\n\nEnd date : {endDate}";
+                    }
+                    if(vacationAmount != null)
+                    {
+                        messageText += $"\n\nAmount : {vacationAmount}";
+                    }
                     break;
 
 
@@ -324,7 +427,16 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     messageText = $"Sorry, I didn't get that. Please try asking in a different way (intent was {luisResult.TopIntent().intent})";
                     break;
             }
+            /*//Vacations dates
+            var startDate = luisResult?.Entities?.DateStart;
+            var endDate = luisResult?.Entities?.DateEnd;
+            var dateV2 = luisResult?.Entities?.datetime;
 
+            var originalDate = luisResult?.Entities?.originalDate;
+            var newDate = luisResult?.Entities?.newDate;
+
+            // Vacation amount
+            var vacationAmount = luisResult?.Entities?.VacationAmount;*/
             var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
             await stepContext.Context.SendActivityAsync(message, cancellationToken);
 
