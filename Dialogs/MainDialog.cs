@@ -149,9 +149,38 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             }
 
             // Use the text provided in FinalStepAsync or the default if it is the first time.
-            var messageText = stepContext.Options?.ToString() ?? "What can I help you with today?\nSay something like \"Request vacation on March 22 2020\"";
-            var promptMessage = MessageFactory.Text(messageText, messageText, InputHints.ExpectingInput);
-            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = promptMessage }, cancellationToken);
+            //var pizzaOrder = PizzaOrder.Convert(luisResult.Prediction);
+            //var pizzaResponseText = PizzaOrder.GetPizzaOrderString(pizzaOrder);
+            //var responseCardAttachment = new HeroCard("Your order has been placed! ", null, pizzaResponseText, new List<CardImage>() { new CardImage(PizzaOrder.GetPizzaImage()) }).ToAttachment();
+
+            //var chatActivity = Activity.CreateMessageActivity();
+            //chatActivity.Attachments.Add(responseCardAttachment);
+            //await stepContext.Context.SendActivityAsync(chatActivity);
+            var chatActivity = Activity.CreateMessageActivity();
+
+
+            if (stepContext.Options?.ToString() == null)
+            {
+
+                var messageText = "**What can I help you with today?**\n\n";
+                messageText += $">*-Request a vacation on a specific day*\n\n";
+                messageText += $">*-Request a vacation from a start date to an end date*\n\n";
+                messageText += $">*-View your vacation balance*\n\n";
+                messageText += $">*-Approve your direct reports' vacation requests*\n\n";
+                messageText += $">*-View your whole teams' vacation requests*\n\n";
+                messageText += $">*-Show your pending approvals*\n\n";
+                messageText += $">*-View public holidays*\n\n";
+                messageText += $">*-Edit your vacation requests*\n\n";
+
+                var responseCardAttachment = new HeroCard(null, null, messageText).ToAttachment();
+                chatActivity.Attachments.Add(responseCardAttachment);
+            }
+            else
+            {
+                chatActivity.Text = "What else can I do for you?";
+            }
+            return await stepContext.PromptAsync(nameof(TextPrompt), new PromptOptions { Prompt = (Activity)chatActivity }, cancellationToken);
+
         }
 
         private async Task<DialogTurnResult> ActStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -245,24 +274,24 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             //}
 
 
-                var messageText = "What else can I do for you?";
-                messageText += $"\n\nSupported features:";
-                messageText += $"\n\n1-Request vacation on a specific date";
-                messageText += $"\n\n2-Request vacation on from date to date";
-                messageText += $"\n\n3-Approve a person vacation";
-                messageText += $"\n\n4-Show your vacation balance";
-                messageText += $"\n\n5-View team vacations";
-                messageText += $"\n\n6-Show your pending approvals";
-                messageText += $"\n\n7-View public holidays";
-                messageText += $"\n\n8-Switch your vacation date from date to another date";
-                messageText += $"\n\n9-Ask about a person vacation balance";
+            //    var messageText = "What else can I do for you?";
+            //    messageText += $"\n\nSupported features:";
+            //    messageText += $"\n\n1-Request vacation on a specific date";
+            //    messageText += $"\n\n2-Request vacation on from date to date";
+            //    messageText += $"\n\n3-Approve a person vacation";
+            //    messageText += $"\n\n4-Show your vacation balance";
+            //    messageText += $"\n\n5-View team vacations";
+            //    messageText += $"\n\n6-Show your pending approvals";
+            //    messageText += $"\n\n7-View public holidays";
+            //    messageText += $"\n\n8-Switch your vacation date from date to another date";
+            //    messageText += $"\n\n9-Ask about a person vacation balance";
 
-            var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
-                await stepContext.Context.SendActivityAsync(message, cancellationToken);
+            //var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+            //    await stepContext.Context.SendActivityAsync(message, cancellationToken);
 
 
             // Restart the main dialog with a different message the second time around
-            var promptMessage = "Go ahead try something out! :)";
+            var promptMessage = "What else can I do for you?";
             return await stepContext.ReplaceDialogAsync(InitialDialogId, promptMessage, cancellationToken);
         }
 
@@ -307,6 +336,7 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
             var dateV2Array = luisResult?.Entities?.datetime;
             var dateV2 = dateV2Array != null && dateV2Array.Length > 0 && dateV2Array[0]?.Expressions[0].Length > 0 ? dateV2Array[0]?.Expressions[0]?.Split('T')[0] : null;
+            
 
             var originalDateArray = luisResult?.Entities?.originalDate;
             var originalDate = originalDateArray != null && originalDateArray.Length > 0 && originalDateArray[0]?.Expressions[0].Length > 0 ? originalDateArray[0]?.Expressions[0]?.Split('T')[0] : null;
@@ -330,24 +360,24 @@ namespace Microsoft.BotBuilderSamples.Dialogs
             switch (luisResult.TopIntent().intent)
             {
                 case MSVacationBot.Intent.Greetings:
-                    messageText = $"Cheers :)";
+                    messageText = $"Hello! I'm just a bot but it's nice to meet you!";
                     break;
                 case MSVacationBot.Intent.ApproveVacation:
                     //messageText = "Intent.ApproveVacation";
                     
                     if(approveVacation)
                     {
-                        messageText = $"{personName} Vacation Approved!";
+                        messageText = $"{personName}'s vacation has been approved! They will be sent a confirmation email now.";
                     }else
                     {
-                        messageText = $"{personName} Vacation Rejected!";
+                        messageText = $"{personName}'s Vacation has been rejected. They will be sent a rejection email.";
                     }
                     break;
                 case MSVacationBot.Intent.BalanceStatus:
                     //messageText = "Intent.BalanceStatus";
 
                     //var status = BalanceService.Instance.GetStatus(Guid.NewGuid());
-                    messageText = $"\nYou have {status.RemainingDays} {vacationType} days left in your balance";
+                    messageText = $"\nYou have {status.RemainingDays} {vacationType} days left in your vacation balance!";
                     break;
                 case MSVacationBot.Intent.CollectTeamVacation:
                     {
@@ -366,7 +396,6 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     {
                         var requests = _mSVacationService.Requests.GetEmployeePendingRequests(Guid.NewGuid());
                         //messageText = "Intent.GetPendingApprovals";
-                        messageText = "Intent.GetPendingApprovals";
                         messageText = $"Your pending approvals are:" +
                         string.Join(", ", requests.Select(request => $"{request.Employee.FirstName} from {request.StartData} to {request.EndData}"));
 
@@ -382,8 +411,8 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     {
                         var holidays = _mSVacationService.PublicHolidays.GetPublicHolidays();
                    
-                        messageText = $"Public holiday for this year are:\n" +
-                        string.Join("\n", holidays.Select(h => $"- {h.Date.ToShortDateString()}: {h.Name}"));
+                        messageText = $"*Public holidays for this year are*:\n" +
+                        string.Join("\n", holidays.Select(h => $"- {h.Date.ToShortDateString()} -- **{h.Name}**"));
 
                     }
                     break;
@@ -424,26 +453,45 @@ namespace Microsoft.BotBuilderSamples.Dialogs
                     break;
                 case MSVacationBot.Intent.RequestVacation:
                     //messageText = "Intent.RequestVacation";
-                    messageText = "Vacation request submitted successfully";
-                    
-                    if(dateV2 != null)
+                    messageText = "Vacation request submitted successfully!";
+
+
+
+                    if (dateV2Array != null)
                     {
-                        messageText += $"\n\nDate : {dateV2}";
-                    }else
-                    {
-                        if (startDate != null)
+                        Bot.Builder.AI.Luis.DateTimeSpec dateTimeSpec = null;
+                        foreach (var dateV2Spec in dateV2Array)
                         {
-                            messageText += $"\n\nStart date : {startDate}";
+                            if (dateV2Spec.Type == "daterange" || dateV2Spec.Type == "date")
+                                dateTimeSpec = dateV2Spec;
                         }
-                        if (endDate != null)
+                        if (dateTimeSpec.Type == "daterange" || dateTimeSpec.Type == "date")
                         {
-                            messageText += $"\n\nEnd date : {endDate}";
+                            var actualDate = dateTimeSpec.Expressions[0];
+                            actualDate = actualDate.Replace("(", "");
+                            actualDate = actualDate.Replace(")", "");
+                            var dates = actualDate.Split(",");
+                            if(dates.Length == 3)
+                            {
+                                messageText += $"\n\n**Start Date**: {dates[0]}\n\n **End Date**: {dates[1]}";
+                            }
+                            else if(dates.Length == 2 || dates.Length == 1)
+                            {
+                                messageText += $"\n\n**Start Date**: {dates[0]}";
+                            }
+                        }
+                        else if(dateTimeSpec.Type == "date"){
+                            var actualDate = dateTimeSpec.Expressions[0];
+                            messageText += $"\n\n**Start Date**: {actualDate}";  
                         }
                     }
                     if(vacationAmount != null)
                     {
-                        messageText += $"\n\nAmount : {vacationAmount}";
+                        messageText += $"\n\n**Amount**: {vacationAmount}";
                     }
+
+                    messageText = messageText.Replace("XXXX", "2020");
+
                     break;
 
 
@@ -462,8 +510,11 @@ namespace Microsoft.BotBuilderSamples.Dialogs
 
             // Vacation amount
             var vacationAmount = luisResult?.Entities?.VacationAmount;*/
-            var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
-            await stepContext.Context.SendActivityAsync(message, cancellationToken);
+            Activity chatActivity = (Activity)Activity.CreateMessageActivity();
+            var responseCardAttachment = new HeroCard(null, null, messageText).ToAttachment();
+            chatActivity.Attachments.Add(responseCardAttachment);
+            //var message = MessageFactory.Text(messageText, messageText, InputHints.IgnoringInput);
+            await stepContext.Context.SendActivityAsync(chatActivity, cancellationToken);
 
             //return await stepContext.EndDialogAsync();
             return await stepContext.NextAsync(null, cancellationToken);
